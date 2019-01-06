@@ -8,7 +8,7 @@ mbrApp.loadComponents(
 
 			// When you activate this block, Mobirise will restart automatically.
 			_params:{
-				notice:      {type:"separator",title:"<a href='https://witsec.nl/mobirise/gallery' target='_blank' class='alert alert-light' style='cursor:hand; color:#000; text-decoration:none'>Design Blocks Gallery</a><br /><br />"},
+				notice:      {type:"separator",title:"<a href='https://witsec.nl/mobirise/gallery/?" + Math.floor(Math.random() * 100000000) + "' target='_blank' class='alert alert-light' style='cursor:hand; color:#000; text-decoration:none'>Design Blocks Gallery</a><br /><br />"},
 				templateURL: {type:"text",title:"Template (paste here)",default:""},
 				activate:    {type:"switch",title:"Activate block",default:!1,condition:["templateURL"]}
 			},
@@ -18,7 +18,7 @@ mbrApp.loadComponents(
 			_onParamsChange:function($item, param, val){
 				if (param == "activate" && val == true) {
 					// We add a random number to the URL, to avoid any caching
-					var templateURL = this._params.templateURL + "?" + Math.floor(Math.random() * 10000);
+					var templateURL = this._params.templateURL + "?" + Math.floor(Math.random() * 100000000);
 
 					// Try to grab the template
 					var request = $.ajax({ url: templateURL, dataType: "text" });
@@ -52,18 +52,18 @@ mbrApp.loadComponents(
 
 						// Let's do some more checks
 						var m = "";
-						if (!json.templateVersion)
-							m = "The template does not contain the required field 'version'.";
-						if (json.templateVersion != 1)
-							m = "The template has a version number that's incompatible with this version of the extension.";
-						if (!json._customHTML)
+						if (!json.hasOwnProperty('data'))
+							m = "The template does not contain the required field 'data'.";
+						if (!json.data.hasOwnProperty('_styles'))
+							json.data._styles = "";
+						if (!json.data.hasOwnProperty('_customHTML'))
 							m = "The template does not contain the required field '_customHTML'.";
-						if (!json._styles)
-							m = "The template does not contain the required field '_styles'.";
+						if (!json.data.hasOwnProperty('_customCSS'))
+							json.data._customCSS = "";
 
 						// If there's an error, show it and return
 						if (m) {
-							mbrApp.alertDlg(m);
+							mbrApp.alertDlg("<b>Invalid template</b><br /><br />" + m);
 							return false;
 						}
 
@@ -71,8 +71,9 @@ mbrApp.loadComponents(
 						delete block.alias;
 						delete block._params;
 						delete block._tags;
-						block._customHTML = json._customHTML;
-						block._styles = json._styles;
+						block._styles = json.data._styles;
+						block._customHTML = json.data._customHTML;
+						block._customCSS = json.data._customCSS;	// This doesn't end up in the project.mobirise file yet, perhaps more data is required
 
 						// Let the user know what's going on
 						block._message = "Block is prepared. Mobirise will restart in a few seconds...";
