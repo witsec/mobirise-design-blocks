@@ -1,7 +1,7 @@
 {
-   "name" : "Design Blocks v0.3",
+   "name" : "Design Blocks v0.4",
    "alias" : "witsec-design-blocks",
-   "version" : 0.3,
+   "version" : 0.4,
    "appScript": true,
    "minAppVersion" : "4",
    "components" : [ "witsec-design-blocks-block" ],

@@ -8,7 +8,7 @@ mbrApp.loadComponents(
 
 			// When you activate this block, Mobirise will restart automatically.
 			_params:{
-				notice:      {type:"separator",title:"<a href='https://witsec.nl/mobirise/gallery/?version=0.3&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap") + "&random=" + Math.floor(Math.random() * 100000000) + "' target='_blank' class='alert alert-light' style='cursor:hand; color:#000; text-decoration:none'>Design Blocks Gallery</a><br /><br />"},
+				notice:      {type:"separator",title:"<a href='https://witsec.nl/mobirise/gallery/?version=0.4&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap") + "&random=" + Math.floor(Math.random() * 100000000) + "' target='_blank' class='alert alert-light' style='cursor:hand; color:#000; text-decoration:none'>Design Blocks Gallery</a><br /><br />"},
 				templateURL: {type:"text",title:"Template (paste here)",default:""},
 				activate:    {type:"switch",title:"Activate block",default:!1,condition:["templateURL"]}
 			},
@@ -74,8 +74,10 @@ mbrApp.loadComponents(
 							// _customCSS exists, but _styles is empty, so let's try to convert CSS to JSON here
 							var css = json.data._customCSS;
 
-							// Put everything on new lines
+							// Delete all tabs and break lines
 							css = css.replace(/[\r\n\t]+/gm, "");
+
+							// Put "}", ";" and "{" on new lines
 							css = css.replace(/([};]{1})/gm, "\n$1\n");
 							css = css.replace(/{/gm, "{\n");
 
@@ -93,7 +95,7 @@ mbrApp.loadComponents(
 							// Remove all new lines
 							css = css.replace(/\n/gm, "")
 
-							// Add trailing commas, but remove the ones before a closing bracket and the one at the very end
+							// Add trailing commas after "}", but remove the ones before "{" and the one at the very end
 							css = css.replace(/}/gm, "},")
 							css = css.replace(/,([ \\n]*})/gm, "$1");
 							css = css.replace(/(.+),[ \\n]*$/gm, "$1");

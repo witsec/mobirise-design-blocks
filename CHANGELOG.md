@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.4 (2019-01-18)
+
+- Added feature to remove elements using class "remove-on-publish". This is useful when certain things need to be visible inside Mobirise, but not on preview/publish
+
 ## 0.3 (2019-01-13)
 
 - Added AMP support
