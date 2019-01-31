@@ -7,7 +7,74 @@
             load: function() {
                 var a = this;
 
-				// When the document is ready, we're going to try to make this block available to the user. This is a very very dirty, but until we find a better way this'll have to do...
+				a.$body.on("click", ".witsec-show-design-gallery", function(b) {
+					// Hide the params modal
+					mbrApp.hideComponentParams();
+
+					// Create the query string
+					var qs = "version=0.5&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
+
+					// Gallery URL
+					var url = "https://witsec.nl/mobirise/gallery/embed.php?" + qs;
+
+					// Try to grab the HTML of the Design Blocks Gallery (we need to do a synchronous call here)
+					var html = "";
+					var request = $.ajax({ url: url, dataType: "text", async: false });
+					request.error(function(jqXHR, textStatus, errorThrown) { html = "An error occured while loading the Design Blocks Gallery. Please try again later."; });
+					request.success(function(result) { html = result; });
+
+					// Custom styling for Design Blocks Gallery
+					var css = `
+					<style>
+					.witsec-blocks {
+					  height: ` + Math.ceil(window.innerHeight * 0.5) + `px;
+					}
+					</style>`;
+
+					// Show the Design Blocks Gallery
+					mbrApp.showDialog({
+						title: "Design Blocks Gallery",
+						className: "witsec-modal",
+						body: [
+							css,
+							'<div id="witsec-design-blocks-gallery">',
+							html,
+							'</div>'
+						].join("\n"),
+						buttons: [{
+							label: "ACTIVATE SELECTED BLOCK",
+							default: !0,
+							callback: function() {
+								// Check if a block has indeed been selected
+								if ($('#witsec-selected-block').val() == "") {
+									mbrApp.alertDlg("No block was selected.");
+									return false;
+								}
+
+								// Set the URL and tell Mobirise the input has changed
+								$('input[name="witsecBlockURL"]').val( $('#witsec-selected-block').val() );
+								$('input[name="witsecBlockURL"]').change();
+
+								// Make sure the "activate" switch is unchecked
+								$('input[name="witsecBlockActivate"]').prop("checked", false);
+
+								// Wait a little while before "clicking" the activate switch. If we don't do this, the chance of the block not actually activating is much higher than usual
+								setTimeout(function() {
+									$('input[name="witsecBlockActivate"]').click();
+								}, 1000);
+							}
+						},
+						{
+							label: "CANCEL",
+							default: !0,
+							callback: function () {
+							}
+						}
+						]
+					});
+				});
+
+				// When the document is ready, we're going to try to make this block available to the user. This is very very dirty, but until we find a better way this'll have to do...
 				$(document).ready(function() {
 					// Only do this for AMP
 					if (mbrApp.isAMP()) {

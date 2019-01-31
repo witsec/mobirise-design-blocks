@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.5 (2019-01-31)
+
+- Changed the way the Design Blocks Gallery is loaded inside Mobirise
+- Updated the Design Blocks Gallery
+- Added popup notification if a Design Block fails to load
+
 ## 0.4 (2019-01-18)
 
 - Added feature to remove elements using class "remove-on-publish". This is useful when certain things need to be visible inside Mobirise, but not on preview/publish
