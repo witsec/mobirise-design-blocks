@@ -12,7 +12,7 @@
 					mbrApp.hideComponentParams();
 
 					// Create the query string
-					var qs = "version=0.5&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
+					var qs = "version=0.6&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
 
 					// Gallery URL
 					var url = "https://witsec.nl/mobirise/gallery/embed.php?" + qs;
@@ -94,6 +94,11 @@
 							</li>
 						`;
 
+						// Trigger the "add block to page" button, so we can add the Design Blocks block to the extensions list. Then close it again using the toggle function.
+						// Also the ".ext-link" class is used in another window (new project), which we don't want to disturb.
+						$(".app-components-toggle").trigger("click");
+						mbrApp.toggleComponentsList();
+
 						// Try to add this block to Mobirise
 						var tries = 20;
 						var checkExist = setInterval(function() {
@@ -124,7 +129,7 @@
 
                 a.addFilter("publishHTML", function(b) {
 					// Rename html/head/body elements and remove DOCTYPE, so we don't lose them when we want to get them back from jQuery (there must be a better way, right?)
-					b = b.replace(/<!DOCTYPE html>/igm, "");
+					b = b.replace(/<!DOCTYPE html>/igm, "");					
 					b = b.replace(/<([/]?)(html|head|body)/igm, "<$1$2x");
 
 					// Let's remove the elements that should be removed on publish
@@ -135,6 +140,10 @@
 					// Rename the elements back	and re-add DOCTYPE				
 					b = b.replace(/<([/]?)(html|head|body)x/igm, "<$1$2");
 					b = "<!DOCTYPE html>\n" + b;
+
+					// Restore crippled PHP tags
+					b = b.replace(/<!--\?/igm, "<?");
+					b = b.replace(/\?-->/igm, "?>");
 
 					return b
 				});

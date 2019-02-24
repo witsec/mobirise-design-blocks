@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.6 (2019-02-24)
+
+- Fixed an issue where if the user didn't open the components tab within 20 seconds, the Design Block wasn't added to the components tab in AMP
+- Added a fix to restore crippled PHP tags. Unsure if this is really an extension issue, but it fixes it anyway
+
 ## 0.5 (2019-01-31)
 
 - Changed the way the Design Blocks Gallery is loaded inside Mobirise
