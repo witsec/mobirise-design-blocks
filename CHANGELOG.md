@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.7 (2019-03-15)
+
+- Overhauled the way the Design Blocks Gallery is loaded in Mobirise. You no longer have to first drag a block onto your page, you simply click the Gallery icon at the top of Mobirise
+- The overhaul removed the hacky way that AMP support was implemented
+
 ## 0.6 (2019-02-24)
 
 - Fixed an issue where if the user didn't open the components tab within 20 seconds, the Design Block wasn't added to the components tab in AMP

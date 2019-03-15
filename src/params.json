@@ -1,10 +1,10 @@
 {
-   "name" : "Design Blocks v0.6",
+   "name" : "Design Blocks v0.7",
    "alias" : "witsec-design-blocks",
-   "version" : 0.6,
+   "version" : 0.7,
    "appScript": true,
    "minAppVersion" : "4",
-   "components" : [ "witsec-design-blocks-block" ],
+   "components" : [ ],
 	"dependencies": [
       "static/style.css"
    ],

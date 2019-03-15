@@ -7,12 +7,13 @@
             load: function() {
                 var a = this;
 
-				a.$body.on("click", ".witsec-show-design-gallery", function(b) {
-					// Hide the params modal
-					mbrApp.hideComponentParams();
+				// Add button to navbar to open the Design Blocks Gallery
+				a.$body.find(".navbar-devices").append('<li class="btnDesignBlocksGallery" style="width:66px; height:58px; cursor:pointer" data-tooltipster="bottom" title="Design Blocks Gallery"><i class="mbr-icon-image-gallery mbr-iconfont"></i></li>');
 
+				// Handler for Gallery button
+				a.$body.on("click", ".btnDesignBlocksGallery", function(b) {
 					// Create the query string
-					var qs = "version=0.6&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
+					var qs = "version=0.7&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
 
 					// Gallery URL
 					var url = "https://witsec.nl/mobirise/gallery/embed.php?" + qs;
@@ -31,7 +32,7 @@
 					}
 					</style>`;
 
-					// Show the Design Blocks Gallery
+					// Display the Gallery
 					mbrApp.showDialog({
 						title: "Design Blocks Gallery",
 						className: "witsec-modal",
@@ -39,29 +40,173 @@
 							css,
 							'<div id="witsec-design-blocks-gallery">',
 							html,
+							'</div><br />',
+							'<form class="form-inline">',
+							'<div class="form-group">',
+							'  <input type="text" class="form-control" id="witsec-custom-block" placeholder="Enter a custom URL here" value="" />',
+							'</form>',
 							'</div>'
-						].join("\n"),
+							].join("\n"),
 						buttons: [{
-							label: "ACTIVATE SELECTED BLOCK",
+							label: "ADD BLOCK TO PAGE",
 							default: !0,
 							callback: function() {
-								// Check if a block has indeed been selected
-								if ($('#witsec-selected-block').val() == "") {
-									mbrApp.alertDlg("No block was selected.");
-									return false;
+								try {
+									// Grab the block URL
+									var blockURL = ( $("#witsec-custom-block").val() != "" ? $("#witsec-custom-block").val() : $("#witsec-selected-block").val() );
+
+									// Download the selected block (and everything else from the component.js)
+									if (blockURL == "") {
+										mbrApp.alertDlg("Please select a Design Block.");
+										return false;
+									}
+
+									// Try to grab the block (we need to do a synchronous call here)
+									var request = $.ajax({ url: blockURL, dataType: "text", async: false });
+
+									// On failure
+									request.error(function(jqXHR, textStatus, errorThrown) {
+										if (textStatus == "timeout")
+											m = "The server is not responding.";
+
+										if (textStatus == "error")
+											m = "An error occured while loading the block. " + errorThrown;
+
+										mbrApp.alertDlg(m);
+										return false;
+									});
+
+									// On success
+									var result = "";
+									request.success(function(res) {
+										result = res;
+									});
+
+									// Double check if we were successful in retrieving the file
+									if (result == "") {
+										mbrApp.alertDlg("An unknown error occured while loading the block.");
+										return false;
+									}
+
+									// Validate JSON
+									var json = "";
+									try {
+										json = jQuery.parseJSON(result);
+									}
+									catch(e) {
+										mbrApp.alertDlg("The block you selected does not appear to be valid JSON.");
+										return false;
+									}
+
+									// Let's do some more checks
+									var error = "";
+									var warn = "";
+									if (!json.hasOwnProperty('data'))
+										error = "The block does not contain the required field 'data'.";
+
+									// Check if _styles exists (doesn't have to be there)
+									if (!json.data.hasOwnProperty('_styles'))
+										json.data._styles = {};
+
+									// Check _customHTML
+									if (!json.data.hasOwnProperty('_customHTML'))
+										error = "The block does not contain the required field '_customHTML'.";
+									else {
+										if (!json.data._customHTML.match(/<mbr-parameters>/i)) {
+											warn += "<li>There don't appear to be any parameters inside the '_customHTML' field. This means you will not be able to customize this block using the 'gear icon'.</li>";
+										}
+									}
+
+									// In case the block is a custom html block created with the Code Editor, try to convert the CSS into JSON
+									if (json.data.hasOwnProperty('_customCSS') && json.data._customCSS != "" && json.data._customTemplate) {
+										// _customCSS exists, but _styles is empty, so let's try to convert CSS to JSON here
+										var css = json.data._customCSS;
+
+										// Delete all tabs and break lines
+										css = css.replace(/[\r\n\t]+/gm, "");
+
+										// Put "}", ";" and "{" on new lines
+										css = css.replace(/([};]{1})/gm, "\n$1\n");
+										css = css.replace(/{/gm, "{\n");
+
+										// Remove leading and trailing spaces
+										css = css.replace(/^ +/gm, '');
+										css = css.replace(/ +$/gm, '');
+
+										// Add double quotes
+										css = css.replace(/^(.+) *: *(.+)/gm, '"$1":"$2"');
+										css = css.replace(/(.+){/gm, '"$1": {');
+
+										// Replace trailing semicolon with a comma
+										css = css.replace(/;$/gm, ',');
+
+										// Remove all new lines
+										css = css.replace(/\n/gm, "")
+
+										// Add trailing commas after "}", but remove the ones before "{" and the one at the very end
+										css = css.replace(/}/gm, "},")
+										css = css.replace(/,([ \\n]*})/gm, "$1");
+										css = css.replace(/(.+),[ \\n]*$/gm, "$1");
+
+										// Add brackets and we're done
+										css = "{" + css + "}";
+
+										try {
+											var jsoncss = jQuery.parseJSON(css);
+											json.data._styles = jsoncss;
+										}
+										catch(e) {
+											warn += "<li>There was an issue processing the '_customCSS' field. The block will be imported, but it may have styling issues.</li>";
+										}
+									}
+
+									// If there's an error, show it and return
+									if (error) {
+										mbrApp.alertDlg(error);
+										return false;
+									}
+
+									// If there's a warning, show it and continue
+									if (warn) {
+										mbrApp.alertDlg("There are one or more warnings:<br /><br /><ul>" + warn + "</ul>");
+									}
+
+									// Generate a new _cid
+									var cid = "";
+									var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+									for (var i = 0; i < 10; i++) {
+										cid += chars.charAt(Math.floor(Math.random() * chars.length));
+									}
+
+									// Create an object for the new block
+									var newBlock = {
+										_alias: false,
+										_styles: json.data._styles,
+										_name: "design-block",
+										_customHTML: json.data._customHTML,
+										_cid: cid,
+										_protectedParams: [],
+										_global: false,
+										_once: false,
+										_params: {},
+										_anchor: "design-block-" + cid
+									};
+
+									// Create a new component on the current page
+									var currentPage = mbrApp.Core.currentPage;
+									var size = mbrApp.Core.resultJSON[currentPage].components.length;
+									mbrApp.Core.resultJSON[currentPage].components[size] = newBlock;
+
+									// Save the project
+									mbrApp.runSaveProject(function() {
+										mbrApp.loadRecentProject(function(){
+											$("a[data-page='" + currentPage + "']").trigger("click");
+										});
+									});
 								}
-
-								// Set the URL and tell Mobirise the input has changed
-								$('input[name="witsecBlockURL"]').val( $('#witsec-selected-block').val() );
-								$('input[name="witsecBlockURL"]').change();
-
-								// Make sure the "activate" switch is unchecked
-								$('input[name="witsecBlockActivate"]').prop("checked", false);
-
-								// Wait a little while before "clicking" the activate switch. If we don't do this, the chance of the block not actually activating is much higher than usual
-								setTimeout(function() {
-									$('input[name="witsecBlockActivate"]').click();
-								}, 1000);
+								catch(err){
+									mbrApp.alertDlg(err.name + ', ' +err.message);
+								}
 							}
 						},
 						{
@@ -74,58 +219,6 @@
 					});
 				});
 
-				// When the document is ready, we're going to try to make this block available to the user. This is very very dirty, but until we find a better way this'll have to do...
-				$(document).ready(function() {
-					// Only do this for AMP
-					if (mbrApp.isAMP()) {
-
-						// Create the UL
-						var ul = `
-							<h5 data-group="witsec">witsec</h5>
-							<ul class="witsec-components-group">
-							</ul>
-						`;
-
-						// Create the LI
-						var li = `
-							<li class="witsec-design-blocks-component" data-layer="add-component" data-filter="Extension">
-								<a href="javascript:void(0)" data-component="witsec-design-blocks-block">
-								<img src="` + mbrApp.getAddonsDir() + `/witsec-design-blocks/witsec-design-blocks-block/thumb.png" alt="witsec-design-blocks-block"></a>
-							</li>
-						`;
-
-						// Trigger the "add block to page" button, so we can add the Design Blocks block to the extensions list. Then close it again using the toggle function.
-						// Also the ".ext-link" class is used in another window (new project), which we don't want to disturb.
-						$(".app-components-toggle").trigger("click");
-						mbrApp.toggleComponentsList();
-
-						// Try to add this block to Mobirise
-						var tries = 20;
-						var checkExist = setInterval(function() {
-							// We only try this x times
-							if (tries == 0) {
-								clearInterval(checkExist);
-								return false;
-							}
-
-							// Check if the components group "witsec" exists already. If not, add it
-							if ($(".witsec-components-group").length) {
-								// Check if the component exists already. If not, add it
-								if ($(".witsec-design-blocks-component").length) {
-									clearInterval(checkExist);
-								}
-								else {
-									$(".witsec-components-group").append(li);
-								}								
-							}
-							else {
-								// Insert this before the "Add Block" button
-								$(ul).insertBefore(".ext-link");
-							}
-							tries--;
-						}, 1000);
-					}
-				});
 
                 a.addFilter("publishHTML", function(b) {
 					// Rename html/head/body elements and remove DOCTYPE, so we don't lose them when we want to get them back from jQuery (there must be a better way, right?)
