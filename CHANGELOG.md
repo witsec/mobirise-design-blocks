@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.8 (2019-04-04)
+
+- Fixed PHP code being crippled in certain cases.
+
 ## 0.7 (2019-03-15)
 
 - Overhauled the way the Design Blocks Gallery is loaded in Mobirise. You no longer have to first drag a block onto your page, you simply click the Gallery icon at the top of Mobirise

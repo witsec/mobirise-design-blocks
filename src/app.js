@@ -225,6 +225,10 @@
 					b = b.replace(/<!DOCTYPE html>/igm, "");					
 					b = b.replace(/<([/]?)(html|head|body)/igm, "<$1$2x");
 
+					// "Encode" PHP code
+					b = b.replace("<?", "<!--[PHP]<?");
+					b = b.replace("?>", "?>[/PHP]-->");
+
 					// Let's remove the elements that should be removed on publish
 					j = $(b);
 					j.find(".remove-on-publish").remove();
@@ -234,9 +238,9 @@
 					b = b.replace(/<([/]?)(html|head|body)x/igm, "<$1$2");
 					b = "<!DOCTYPE html>\n" + b;
 
-					// Restore crippled PHP tags
-					b = b.replace(/<!--\?/igm, "<?");
-					b = b.replace(/\?-->/igm, "?>");
+					// "Decode" PHP code
+					b = b.replace("<!--[PHP]<?", "<?");
+					b = b.replace("?>[/PHP]-->", "?>");
 
 					return b
 				});
