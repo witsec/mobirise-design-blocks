@@ -226,8 +226,8 @@
 					b = b.replace(/<([/]?)(html|head|body)/igm, "<$1$2x");
 
 					// "Encode" PHP code
-					b = b.replace(/<\?/g, "<!--[PHP]<?");
-					b = b.replace(/\?>/g, "?>[/PHP]-->");
+					b = b.replace(/<\?/g, "<!--[PHP-DB]<?");
+					b = b.replace(/\?>/g, "?>[/PHP-DB]-->");
 
 					// Let's remove the elements that should be removed on publish
 					j = $(b);
@@ -239,8 +239,8 @@
 					b = "<!DOCTYPE html>\n" + b;
 
 					// "Decode" PHP code
-					b = b.replace(/<!--\[PHP\]<\?/g, "<?");
-					b = b.replace(/\?>\[\/PHP\]-->/g, "?>");
+					b = b.replace(/<!--\[PHP-DB\]<\?/g, "<?");
+					b = b.replace(/\?>\[\/PHP-DB\]-->/g, "?>");
 
 					return b
 				});
