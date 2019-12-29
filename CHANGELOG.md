@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2 (2019-12-29)
+
+- Added fix to stop PHP code from getting crippled
+- Added GitHub Actions CI pipeline to automatically generate mbrext files
+
 ## 0.8 (2019-04-04)
 
 - Fixed PHP code being crippled in certain cases.

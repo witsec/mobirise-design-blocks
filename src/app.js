@@ -13,7 +13,7 @@
 				// Handler for Gallery button
 				a.$body.on("click", ".btnDesignBlocksGallery", function(b) {
 					// Create the query string
-					var qs = "version=0.7&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
+					var qs = "version=2.0&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
 
 					// Gallery URL
 					var url = "https://witsec.nl/mobirise/gallery/embed.php?" + qs;
@@ -43,11 +43,19 @@
 							'</div><br />',
 							'<form class="form-inline">',
 							'<div class="form-group">',
-							'  <input type="text" class="form-control" id="witsec-custom-block" placeholder="Enter a custom URL here" value="" />',
+							'  <input type="text" class="form-control" id="witsec-custom-block" placeholder="Paste URL or click browse" value="" />',
+							'  <button class="btn btn-primary" type="submit" id="witsec-custom-block-browse">BROWSE</button>',
 							'</form>',
 							'</div>'
 							].join("\n"),
-						buttons: [{
+						buttons: [
+						{
+							label: "CANCEL",
+							default: !1,
+							callback: function () {
+							}
+						},
+						{
 							label: "ADD BLOCK TO PAGE",
 							default: !0,
 							callback: function() {
@@ -208,39 +216,38 @@
 									mbrApp.alertDlg(err.name + ', ' +err.message);
 								}
 							}
-						},
-						{
-							label: "CANCEL",
-							default: !0,
-							callback: function () {
-							}
 						}
 						]
 					});
 				});
 
+				// Respond to clicking on the browse button
+				a.$body.on("click", "#witsec-custom-block-browse", function() {
+					Bridge.runFileDialog("Select Design Block",mbrApp.projectPath,"Design Blocks (*.json *.js)",function(c){
+						$("#witsec-custom-block").val(c);
+					});
+				});
 
+				// Do things on publish
                 a.addFilter("publishHTML", function(b) {
 					// Rename html/head/body elements and remove DOCTYPE, so we don't lose them when we want to get them back from jQuery (there must be a better way, right?)
 					b = b.replace(/<!DOCTYPE html>/igm, "");					
 					b = b.replace(/<([/]?)(html|head|body)/igm, "<$1$2x");
 
-					// "Encode" PHP code
-					b = b.replace(/<\?/g, "<!--[PHP-DB]<?");
-					b = b.replace(/\?>/g, "?>[/PHP-DB]-->");
+					// Hide PHP using HTML comment tags, as jQuery doesn't understand these tags and distorts them beyond repair
+					b = b.replace(/(<\?[\w\W]+?\?>)/gmi, "<!--$1-->");
 
 					// Let's remove the elements that should be removed on publish
 					j = $(b);
 					j.find(".remove-on-publish").remove();
-					b = j.prop('outerHTML');
+					b = j.prop("outerHTML");
+
+					// Restore PHP tags to their former glory
+					b = b.replace(/<!--(<\?[\w\W]+?\?>)-->/gmi, "$1");
 
 					// Rename the elements back	and re-add DOCTYPE				
 					b = b.replace(/<([/]?)(html|head|body)x/igm, "<$1$2");
 					b = "<!DOCTYPE html>\n" + b;
-
-					// "Decode" PHP code
-					b = b.replace(/<!--\[PHP-DB\]<\?/g, "<?");
-					b = b.replace(/\?>\[\/PHP-DB\]-->/g, "?>");
 
 					return b
 				});
