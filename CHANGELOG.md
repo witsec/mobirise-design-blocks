@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v3 (2020-01-02)
+
+- Fixed a bug so code before !DOCTYPE is handled properly
+
 ## v2 (2019-12-29)
 
 - Added fix to stop PHP code from getting crippled

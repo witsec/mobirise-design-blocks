@@ -13,7 +13,7 @@
 				// Handler for Gallery button
 				a.$body.on("click", ".btnDesignBlocksGallery", function(b) {
 					// Create the query string
-					var qs = "version=2.0&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
+					var qs = "version=3.0&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
 
 					// Gallery URL
 					var url = "https://witsec.nl/mobirise/gallery/embed.php?" + qs;
@@ -230,8 +230,13 @@
 
 				// Do things on publish
                 a.addFilter("publishHTML", function(b) {
+					// Remove any code before DOCTYPE (don't worry, we'll put it back later)
+					var pattern = /^([\w\W]*?)<!DOCTYPE html>/mi;
+					var beforeDocType = b.match(pattern);
+					b = b.replace(pattern, "");
+
 					// Rename html/head/body elements and remove DOCTYPE, so we don't lose them when we want to get them back from jQuery (there must be a better way, right?)
-					b = b.replace(/<!DOCTYPE html>/igm, "");					
+					b = b.replace(/<!DOCTYPE html>/igm, "");
 					b = b.replace(/<([/]?)(html|head|body)/igm, "<$1$2x");
 
 					// Hide PHP using HTML comment tags, as jQuery doesn't understand these tags and distorts them beyond repair
@@ -245,9 +250,11 @@
 					// Restore PHP tags to their former glory
 					b = b.replace(/<!--(<\?[\w\W]+?\?>)-->/gmi, "$1");
 
-					// Rename the elements back	and re-add DOCTYPE				
+					// Rename the elements back
 					b = b.replace(/<([/]?)(html|head|body)x/igm, "<$1$2");
-					b = "<!DOCTYPE html>\n" + b;
+
+					// re-add code (if any) before DOCTYPE, including DOCTYPE itself
+					b = (beforeDocType ? beforeDocType[1] : "") + "<!DOCTYPE html>\n" + b;
 
 					return b
 				});
