@@ -1,7 +1,7 @@
 {
-   "name" : "Design Blocks v3",
+   "name" : "Design Blocks v4",
    "alias" : "witsec-design-blocks",
-   "version" : 3,
+   "version" : 4,
    "appScript": true,
    "minAppVersion" : "4",
    "components" : [ ],
@@ -9,5 +9,5 @@
       "static/style.css"
    ],
    "description" : "Make life easier with the Design Blocks Gallery. Pick and choose blocks you like and add them to your websites. <a href='https://witsec.nl'>Learn more...</a>",
-   "logo" : "thumbnail.png"
+   "logo" : "thumbnail.svg"
 }
