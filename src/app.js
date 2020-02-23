@@ -13,7 +13,7 @@
 				// Handler for Gallery button
 				a.$body.on("click", ".btnDesignBlocksGallery", function(b) {
 					// Create the query string
-					var qs = "version=3.0&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
+					var qs = "version=4.0&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
 
 					// Gallery URL
 					var url = "https://witsec.nl/mobirise/gallery/embed.php?" + qs;
