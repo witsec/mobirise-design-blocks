@@ -1,4 +1,4 @@
-(function(jQuery, mbrApp) {
+defineM("witsec-design-blocks", function(g, mbrApp, tr) {
 
 	var curr;
     mbrApp.regExtension({
@@ -8,12 +8,12 @@
                 var a = this;
 
 				// Add button to navbar to open the Design Blocks Gallery
-				a.$body.find(".navbar-devices").append('<li class="btnDesignBlocksGallery" style="width:66px; height:58px; cursor:pointer" data-tooltipster="bottom" title="Design Blocks Gallery"><i class="mbr-icon-image-gallery mbr-iconfont"></i></li>');
+				a.$body.find(".navbar-devices").append('<li class="btnDesignBlocksGallery" style="width:66px; height:58px; cursor:pointer" data-tooltipster="bottom" title="Design Blocks Gallery"><i class="mbr-icon-cubes mbr-icon-image-gallery mbr-iconfont"></i></li>');
 
 				// Handler for Gallery button
 				a.$body.on("click", ".btnDesignBlocksGallery", function(b) {
 					// Create the query string
-					var qs = "version=4.0&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
+					var qs = "version=5.0&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
 
 					// Gallery URL
 					var url = "https://witsec.nl/mobirise/gallery/embed.php?" + qs;
@@ -231,4 +231,4 @@
             }
         }
     })
-})(jQuery, mbrApp);
+}, ["jQuery", "mbrApp", "TR()"]);
