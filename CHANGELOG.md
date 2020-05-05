@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## v6 (2020-05-05)
+
+- Fixed block menu from disappearing
+- Added check if generated component ID for new block is not already used somewhere else in the project
+
 ## v5 (2020-03-14)
 
 - Fixed compatibility with Mobirise v5

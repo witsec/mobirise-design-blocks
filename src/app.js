@@ -12,8 +12,12 @@ defineM("witsec-design-blocks", function(g, mbrApp, tr) {
 
 				// Handler for Gallery button
 				a.$body.on("click", ".btnDesignBlocksGallery", function(b) {
+
+					// Restore view (so block menu keeps working)
+					$(".navbar-devices > li[data-device='desktop'] > a").trigger("click");
+
 					// Create the query string
-					var qs = "version=5.0&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
+					var qs = "version=6.0&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
 
 					// Gallery URL
 					var url = "https://witsec.nl/mobirise/gallery/embed.php?" + qs;
@@ -179,25 +183,19 @@ defineM("witsec-design-blocks", function(g, mbrApp, tr) {
 										mbrApp.alertDlg("There are one or more warnings:<br /><br /><ul>" + warn + "</ul>");
 									}
 
-									// Generate a new _cid
-									var cid = "";
-									var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-									for (var i = 0; i < 10; i++) {
-										cid += chars.charAt(Math.floor(Math.random() * chars.length));
-									}
-
 									// Create an object for the new block
+									var cid = GenerateCID();
 									var newBlock = {
-										alias: false,
-										_styles: json.data._styles,
-										_name: "design-block",
-										_customHTML: json.data._customHTML,
-										_cid: cid,
-										_protectedParams: [],
-										_global: false,
-										_once: false,
-										_params: {},
-										_anchor: "design-block-" + cid
+										"alias":            false,
+										"_styles":          json.data._styles,
+										"_name":            "design-block",
+										"_customHTML":      json.data._customHTML,
+										"_cid":             cid,
+										"_protectedParams": [],
+										"_global":          false,
+										"_once":            false,
+										"_params":          {},
+										"_anchor":          "design-block-" + cid
 									};
 
 									// Create a new component on the current page
@@ -228,6 +226,39 @@ defineM("witsec-design-blocks", function(g, mbrApp, tr) {
 					});
 				});
 
+				// Function to generate a component ID
+				function GenerateCID() {
+					var cid = "";
+					var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+					// Loop until we get a unique CID (usually one go needed, but there's a super small chance you end up with a CID that already exists)
+					while (cid == "") {
+						// Generate random string
+						for (var i = 0; i < 10; i++) {
+							cid += chars.charAt(Math.floor(Math.random() * chars.length));
+						}
+
+						// Let's check if that CID already exists anywhere else in the project
+						var pages = mbrApp.getPages();
+						for(var page in pages) {
+	
+							// Loop through all components of a page
+							for (i=0; i<pages[page]["components"].length; i++) {
+								if (cid == pages[page]["components"][i]["_cid"]) {
+									cid = "";
+									break;
+								}
+							}
+
+							// If CID is empty, we need to start over, so exit this loop
+							if (cid == "")
+								break;
+						}
+					}
+
+					// We're here, so we got ourselves a unique CID
+					return cid;
+				}
             }
         }
     })
