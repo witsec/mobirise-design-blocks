@@ -17,7 +17,7 @@ defineM("witsec-design-blocks", function(g, mbrApp, tr) {
 					$(".navbar-devices > li[data-device='desktop'] > a").trigger("click");
 
 					// Create the query string
-					var qs = "version=6.0&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
+					var qs = "version=7.0&type=" + (mbrApp.isAMP() ? "amp" : "bootstrap")
 
 					// Gallery URL
 					var url = "https://witsec.nl/mobirise/gallery/embed.php?" + qs;
@@ -239,7 +239,7 @@ defineM("witsec-design-blocks", function(g, mbrApp, tr) {
 						}
 
 						// Let's check if that CID already exists anywhere else in the project
-						var pages = mbrApp.getPages();
+						var pages = mbrApp.Core.getPages();
 						for(var page in pages) {
 	
 							// Loop through all components of a page

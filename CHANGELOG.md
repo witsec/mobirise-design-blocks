@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v7 (2020-05-12)
+
+- Fixed 'getPages is not a function' error
+
 ## v6 (2020-05-05)
 
 - Fixed block menu from disappearing
