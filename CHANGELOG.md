@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## v8 (2020-06-06)
+
+- Added check if current theme is a 'primary' theme (M/M3), in which case the Gallery is not available
+- Changed ajax calls to the Gallery, as a newer jQuery version is used in v5.0.7. The (now unsupported) synchronous calls are now asynchronous
+- Improved error handling a bit
+
 ## v7 (2020-05-12)
 
 - Fixed 'getPages is not a function' error
