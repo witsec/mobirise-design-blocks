@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v9 (2025-03-18)
+
+- Fixed Gallery icon for Mobirise v6.0.3 and after
+
 ## v8 (2020-06-06)
 
 - Added check if current theme is a 'primary' theme (M/M3), in which case the Gallery is not available

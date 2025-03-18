@@ -12,7 +12,7 @@ defineM("witsec-design-blocks", function(jQuery, mbrApp, TR) {
 					return false;
 
 				// Add button to navbar to open the Design Blocks Gallery
-				a.$body.find(".navbar-devices").append('<li class="btnDesignBlocksGallery" style="width:66px; height:58px; cursor:pointer" data-tooltipster="bottom" title="Design Blocks Gallery"><i class="mbr-icon-cubes mbr-icon-image-gallery mbr-iconfont"></i></li>');
+				a.$body.find(".navbar-devices").append('<li class="btnDesignBlocksGallery" style="width:66px; height:58px; cursor:pointer" data-tooltipster="bottom" title="Design Blocks Gallery"><i class="mbr-icon-cubes mbr-icon-image-gallery mbr-iconfont mbr-icon-photo"></i></li>');
 
 				// Handler for Gallery button
 				a.$body.on("click", ".btnDesignBlocksGallery", function(b) {
