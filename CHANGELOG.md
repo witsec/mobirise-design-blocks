@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v10 (2025-04-12)
+
+- Fixed Gallery icon for Mobirise v6.0.4 and after
+
 ## v9 (2025-03-18)
 
 - Fixed Gallery icon for Mobirise v6.0.3 and after
